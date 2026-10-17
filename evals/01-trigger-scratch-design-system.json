@@ -1,0 +1,13 @@
+{
+  "skills": ["building-design"],
+  "query": "Мы запускаем новый продукт Lumo — трекер привычек для iOS, Android и веба. Дизайна нет вообще. Помоги собрать дизайн-систему с нуля.",
+  "files": [],
+  "should_trigger": true,
+  "expected_behavior": [
+    "Surveys the repo for existing design before creating anything (check_design.py --survey), and reports the detected state",
+    "Proposes the design/ directory structure to the operator and waits for a yes before scaffolding",
+    "Asks a single batched set of clarifying questions (<=5), each carrying a recommended default",
+    "Names the non-negotiables it will deliver: brand, icon packs for web/iOS/Android, UI kit with all states, light + dark themes, runnable prototype",
+    "Does not start producing finished screens before the brand and token layer exist"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "skills": ["building-design"],
+  "query": "Проверь архитектуру нашего фронтенда — слишком много связей между модулями, хочу аудит и рекомендации.",
+  "files": ["src/", "package.json"],
+  "should_trigger": false,
+  "expected_behavior": [
+    "Does not scaffold a design/ workspace or start a design round",
+    "Recognizes this as an architecture review and defers to the appropriate skill"
+  ]
+}

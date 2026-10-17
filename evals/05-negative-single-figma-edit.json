@@ -1,0 +1,10 @@
+{
+  "skills": ["building-design"],
+  "query": "Подвинь кнопку на 8px вправо на фрейме Checkout в нашем Penpot-файле и экспортируй PNG.",
+  "files": [],
+  "should_trigger": false,
+  "expected_behavior": [
+    "Does not create or modify a design/ workspace for a one-off canvas edit",
+    "Routes the request to the design-tool workflow (building-ui-ux) instead of the repo-resident design system lifecycle"
+  ]
+}

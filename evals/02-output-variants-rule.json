@@ -1,0 +1,20 @@
+{
+  "skills": ["building-design"],
+  "query": "Хочу сделать красивый баннер для главной страницы, который продаёт подписку Pro.",
+  "files": ["design/design.config.json", "design/tokens/semantic.tokens.json"],
+  "should_trigger": true,
+  "expected_behavior": [
+    "Clarifies the surface, the single desired outcome, the fixed content, and the constraints before designing",
+    "Produces five labelled variants rendered as live prototype routes, not static descriptions",
+    "States the axis the variants vary along, and recommends one with a reason"
+  ],
+  "assertions": [
+    "The response contains exactly five variant labels A, B, C, D and E (or an explicit justification for using three)",
+    "A single line of the form 'A–E vary by <axis>' is present, and the axis is structural (layout, hierarchy, density, tone, imagery, motion) rather than hue or corner radius",
+    "Each variant has a one-sentence concept that does not describe any other variant",
+    "Each variant is reachable at a prototype URL under /variants/, and a round folder design/variants/<date>-<slug>/ with BRIEF.md and DECISION.md was created",
+    "Exactly one variant is recommended, with one stated reason tied to the brief's goal",
+    "No variant contains a literal hex colour; all colours resolve to semantic tokens",
+    "The response states that the variants were checked in both light and dark themes"
+  ]
+}
