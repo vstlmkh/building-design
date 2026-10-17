@@ -16,6 +16,22 @@ description: >
 license: MIT
 metadata:
   version: "0.1.0"
+  keywords:
+    - design-system
+    - design-tokens
+    - dtcg
+    - design-to-code
+    - design-handoff
+    - ui-kit
+    - dark-mode
+    - theming
+    - app-icons
+    - favicon
+    - brand-kit
+    - ux
+    - user-flows
+    - prototype
+    - accessibility
 ---
 
 # building-design

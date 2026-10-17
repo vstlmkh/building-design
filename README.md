@@ -1,5 +1,13 @@
 # building-design
 
+> Builds a product design system as a versioned, runnable artifact: brand, DTCG tokens with
+> light/dark themes, web/iOS/Android icon packs, a UI kit, UX artifacts and a zero-install
+> interactive prototype — structured so AI coding agents can reimplement the design exactly.
+
+`design-system` · `design-tokens` · `dtcg` · `design-to-code` · `design-handoff` · `ui-kit` ·
+`dark-mode` · `theming` · `app-icons` · `favicon` · `brand-kit` · `ux` · `user-flows` ·
+`prototype` · `accessibility`
+
 An [Agent Skill](https://agentskills.io/specification) for building and growing a product's
 design as a **versioned, runnable artifact** in a git repo.
 
