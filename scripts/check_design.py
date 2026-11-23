@@ -107,7 +107,7 @@ def survey(repo: Path):
     else:
         print("state: empty")
         print("\nNo design found. Propose the structure to the operator, then:")
-        print('  python3 scripts/scaffold_design.py --name "<Product>" --dest .')
+        print('  python3 "$SKILL_DIR/scripts/scaffold_design.py" --name "<Product>" --dest .')
     return 0
 
 
@@ -243,8 +243,12 @@ def check_prototype(d: Path, cfg):
             "double-click index.html and hit the file:// CORS error")
     if not (p / "styles" / "tokens.css").exists():
         add("FAIL", "prototype/styles/tokens.css is missing",
-            "run: python3 scripts/build_tokens.py <design>")
+            "run: python3 \"$SKILL_DIR/scripts/build_tokens.py\" <design>")
     for js in p.rglob("*.js"):
+        # Vendored libraries are third-party code, not this design's colours; SKIP_DIRS
+        # already says so everywhere else in this file.
+        if SKIP_DIRS & set(js.relative_to(p).parts):
+            continue
         for hexval in set(HEX.findall(js.read_text(errors="ignore"))):
             add("WARN", f"prototype/{js.relative_to(p)} hardcodes {hexval}",
                 "prototype colours must come from tokens or the design cannot be themed")
@@ -286,7 +290,7 @@ def check_icons(d: Path, cfg):
         if gone:
             shown = ", ".join(gone[:3]) + (f" (+{len(gone) - 3} more)" if len(gone) > 3 else "")
             add("FAIL", f"icon pack incomplete for {plat}: {shown}",
-                "run: python3 scripts/build_icons.py <design>")
+                "run: python3 \"$SKILL_DIR/scripts/build_icons.py\" <design>")
     if "web" in platforms:
         mark = d / "brand" / "logo" / "mark.svg"
         fav = build / "web" / "favicon.svg"
@@ -334,7 +338,7 @@ def main(argv=None):
     d = find_design(repo)
     if d is None:
         print("FAIL  no design workspace found (no design.config.json)")
-        print("      run: python3 scripts/check_design.py --survey . first")
+        print("      run: python3 \"$SKILL_DIR/scripts/check_design.py\" --survey . first")
         return 1
     cfg = json.loads((d / "design.config.json").read_text())
 

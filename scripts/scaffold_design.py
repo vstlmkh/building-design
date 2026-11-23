@@ -402,7 +402,8 @@ You are implementing a design that already exists. Reproduce it; do not reinterp
 ## Read in this order
 1. `../design.config.json` — product, platforms, targets, conventions.
 2. `../tokens/build/<file for your target>` — generated token constants. Run
-   `python3 scripts/build_tokens.py design` first if `build/` is absent.
+   `python3 "$SKILL_DIR/scripts/build_tokens.py" design` first if `build/` is absent, with
+   `SKILL_DIR` set to the installed building-design skill directory.
 3. `../ui-kit/README.md` — the component inventory and its status.
 4. The `SCR-###` spec in `../ux/screens/` for the screen you are building.
 5. The prototype route named in that spec — run `../prototype/run.sh` and open it.
@@ -522,7 +523,7 @@ def main(argv=None):
     put("prototype/styles/base.css", BASE_CSS)
     # Placeholder so index.html does not 404 before the first token build.
     put("prototype/styles/tokens.css",
-        "/* Placeholder. Run: python3 scripts/build_tokens.py design */\n")
+        "/* Placeholder. Run: python3 \"$SKILL_DIR/scripts/build_tokens.py\" design */\n")
     put("handoff/AGENTS.md", AGENTS_MD)
     put("handoff/platform-map.md", PLATFORM_MAP_MD)
     put("ui-kit/components/ButtonPrimary/ButtonPrimary.js", BUTTON_JS)
@@ -565,10 +566,13 @@ breaks ES modules and the token fetch.
 
 ## Regenerate platform artifacts
 
+Set `SKILL_DIR` to the installed building-design skill directory (Kimi Code exposes it as
+`${{KIMI_SKILL_DIR}}`), then run these commands from the product repo root:
+
 ```bash
-python3 scripts/build_tokens.py design     # tokens  -> css / ts / dart / swift / kotlin / xml
-python3 scripts/build_icons.py design      # master.svg -> web / iOS / Android icon packs
-python3 scripts/check_design.py .          # enforce the completeness rules
+python3 "$SKILL_DIR/scripts/build_tokens.py" design  # tokens -> css/ts/dart/swift/kotlin/xml
+python3 "$SKILL_DIR/scripts/build_icons.py" design   # master.svg -> web/iOS/Android packs
+python3 "$SKILL_DIR/scripts/check_design.py" .       # enforce the completeness rules
 ```
 
 ## Implementing this design in code
@@ -588,7 +592,7 @@ Read `handoff/AGENTS.md` first. It is the contract.
     if skipped:
         print(f"  skipped (exists): {', '.join(skipped)}")
     print("\nNext:")
-    print(f"  python3 scripts/build_tokens.py {root.name}")
+    print(f"  python3 \"$SKILL_DIR/scripts/build_tokens.py\" {root.name}")
     print(f"  {root}/prototype/run.sh")
     return 0
 

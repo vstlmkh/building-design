@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing v* tag to release
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: https://registry.npmjs.org
+      - run: npm test
+      - name: Check tag and package versions
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: python3 -c 'import json, os; version=json.load(open("package.json"))["version"]; assert os.environ["TAG"] == "v" + version, (os.environ["TAG"], version)'
+      - name: Extract release notes
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+          version = json.loads(Path('package.json').read_text())['version']
+          changelog = Path('CHANGELOG.md').read_text()
+          match = re.search(r'^## \[' + re.escape(version) + r'\].*?(?=^## \[|\Z)', changelog, re.M | re.S)
+          assert match, version
+          Path(os.environ['RUNNER_TEMP'], 'release-notes.md').write_text(match.group(0).strip() + '\n')
+          PY
+      - name: Create GitHub release
+        if: vars.RELEASE_ENABLED == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --notes-file "$RUNNER_TEMP/release-notes.md"
+          else
+            gh release create "$TAG" --verify-tag --notes-file "$RUNNER_TEMP/release-notes.md"
+          fi
+      - name: Publish to npm
+        if: vars.PUBLISH_NPMJS == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          package="$(node -p 'require("./package.json").name')"
+          version="$(node -p 'require("./package.json").version')"
+          if npm view "$package@$version" version >/dev/null 2>&1; then
+            echo "$package@$version is already published"
+            exit 0
+          fi
+          npm install -g npm@latest
+          npm publish --provenance
+          for attempt in {1..18}; do
+            npm view "$package@$version" version && exit 0
+            sleep 10
+          done
+          echo "Published package did not become visible in the registry" >&2
+          exit 1

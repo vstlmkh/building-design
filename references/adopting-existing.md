@@ -68,7 +68,7 @@ appearance names (`blue-500` → stays as a primitive; a new semantic token poin
 Scaffold the structure, then copy assets in:
 
 ```bash
-python3 scripts/scaffold_design.py --name "<Product>" --dest . --adopt
+python3 "$SKILL_DIR/scripts/scaffold_design.py" --name "<Product>" --dest . --adopt
 ```
 
 `--adopt` creates the tree and token stubs but **does not** write placeholder brand or icon

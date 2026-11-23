@@ -13,25 +13,20 @@ description: >
   banner/screen", "design handoff for agents", and Russian equivalents ("дизайн-система",
   "сделай дизайн", "брендбук", "иконки приложения", "тёмная тема"). Not for code
   architecture reviews or one-off Figma/Penpot edits.
+type: prompt
+whenToUse: >
+  When the operator asks to create, adopt, or extend a repo-resident product design system,
+  brand, token pipeline, themed UI kit, icon pack, UX flow, screen, banner, or interactive
+  prototype. Do not trigger for code architecture reviews or one-off Figma/Penpot canvas edits.
 license: MIT
+compatibility: >
+  Claude Code or Kimi Code. Requires Python 3; build_icons.py also needs an SVG rasterizer
+  or headless Chrome. No network or package installation is needed for the other scripts.
 metadata:
-  version: "0.1.0"
-  keywords:
-    - design-system
-    - design-tokens
-    - dtcg
-    - design-to-code
-    - design-handoff
-    - ui-kit
-    - dark-mode
-    - theming
-    - app-icons
-    - favicon
-    - brand-kit
-    - ux
-    - user-flows
-    - prototype
-    - accessibility
+  version: "0.2.0"
+  keywords: >-
+    design-system design-tokens dtcg design-to-code design-handoff ui-kit dark-mode theming
+    app-icons favicon brand-kit ux user-flows prototype accessibility
 ---
 
 # building-design
@@ -56,6 +51,21 @@ skill and store its exports here.
 - Gotchas
 - Scripts
 - References
+
+## Runtime and paths
+
+This skill supports both Claude Code and Kimi Code. The operator's project is the working
+directory; the skill directory is a separate location and must never be inferred from it.
+
+`$SKILL_DIR` in commands means the absolute directory containing this `SKILL.md`. Substitute
+the resolved path in every shell invocation rather than relying on shell state to persist:
+
+- Kimi Code: use `${KIMI_SKILL_DIR}`, expanded by the skill loader.
+- Claude Code: use the skill directory supplied by the loader, commonly
+  `~/.claude/skills/building-design` or `.claude/skills/building-design`.
+
+Read `references/` and run `scripts/` from that same directory. Relative Markdown links below
+are relative to this file, not to the operator's project.
 
 ## Non-negotiables
 
@@ -93,7 +103,7 @@ Design cycle:
 **Phase 0 — Survey.** Before anything else, look for design that already exists:
 
 ```bash
-python3 scripts/check_design.py --survey .
+python3 "$SKILL_DIR/scripts/check_design.py" --survey .
 ```
 
 It reports one of three states: `workspace` (a `design/` with `design.config.json` — read it
@@ -104,7 +114,7 @@ Never create a second design system next to an existing one; extend what is ther
 **Phase 1 — Adopt or scaffold.**
 - State `empty` → propose the structure to the operator (show the tree from
   [references/repo-structure.md](references/repo-structure.md)), get a yes, then
-  `python3 scripts/scaffold_design.py --name "<Product>" --dest .`
+  `python3 "$SKILL_DIR/scripts/scaffold_design.py" --name "<Product>" --dest .`
 - State `assets` → do **not** overwrite. Run the intake in
   [references/adopting-existing.md](references/adopting-existing.md): inventory → classify →
   extract tokens from what exists → place into the structure → report what was inferred vs
@@ -133,7 +143,7 @@ and your recommendation. The operator picks, rejects, or requests edits. Edits �
 return to verification. Nothing lands until the operator approves. Before declaring done:
 
 ```bash
-python3 scripts/check_design.py .
+python3 "$SKILL_DIR/scripts/check_design.py" .
 ```
 
 **Phase 6 — Land.** Move the chosen variant out of `variants/` into its permanent home,
@@ -195,26 +205,25 @@ anti-sameness check.
 ## Scripts
 
 All are Python standard library only — no install, no network. Run them; do not reimplement
-their logic inline. Paths below are **relative to this skill's directory**, while `<repo>` is
-the operator's project — invoke them as
-`python3 <skill-dir>/scripts/<name>.py <repo>` from the project root.
+their logic inline. Resolve `$SKILL_DIR` as described in **Runtime and paths**, while `<repo>`
+is the operator's project. Run every command from the project root, not from the skill dir.
 
 ```bash
 # Phase 0 — what design already exists here?
-python3 scripts/check_design.py --survey <repo>
+python3 "$SKILL_DIR/scripts/check_design.py" --survey <repo>
 
 # Phase 1 — create the workspace (never run on a non-empty design/ without --force)
-python3 scripts/scaffold_design.py --name "Acme" --dest <repo>
+python3 "$SKILL_DIR/scripts/scaffold_design.py" --name "Acme" --dest <repo>
 
 # Phase 4 — start an A–E exploration round
-python3 scripts/new_round.py banner --dest <repo> --variants 5
+python3 "$SKILL_DIR/scripts/new_round.py" banner --dest <repo> --variants 5
 
 # Phase 6 — regenerate platform artifacts
-python3 scripts/build_tokens.py <repo>/design      # DTCG → css/ts/dart/swift/kotlin/xml
-python3 scripts/build_icons.py <repo>/design       # master SVG → web/iOS/Android packs
+python3 "$SKILL_DIR/scripts/build_tokens.py" <repo>/design      # DTCG → css/ts/dart/swift/kotlin/xml
+python3 "$SKILL_DIR/scripts/build_icons.py" <repo>/design       # master SVG → web/iOS/Android packs
 
 # Phase 5/6 — enforce the non-negotiables (exit 1 = incomplete design)
-python3 scripts/check_design.py <repo>
+python3 "$SKILL_DIR/scripts/check_design.py" <repo>
 ```
 
 Exit codes: `0` pass · `1` design incomplete / check failed · `2` bad usage · `3` a required

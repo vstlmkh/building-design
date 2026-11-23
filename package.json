@@ -1,0 +1,42 @@
+{
+  "name": "building-design",
+  "version": "0.2.0",
+  "description": "Repo-resident product design systems with tokens, themed UI kits, icon packs, UX artifacts, and interactive prototypes for Claude Code and Kimi Code.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vstlmkh/building-design.git"
+  },
+  "homepage": "https://github.com/vstlmkh/building-design#readme",
+  "keywords": [
+    "agent-skills",
+    "claude-code",
+    "kimi-code",
+    "design-system",
+    "design-tokens",
+    "ui-kit",
+    "prototype"
+  ],
+  "bin": {
+    "building-design": "bin/building-design.js"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "references/*.md",
+    "scripts/*.py"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "python3 test/validate.py && node --check bin/building-design.js",
+    "prepublishOnly": "npm test"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

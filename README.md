@@ -1,5 +1,9 @@
 # building-design
 
+[![npm](https://img.shields.io/npm/v/building-design)](https://www.npmjs.com/package/building-design)
+[![Validate](https://github.com/vstlmkh/building-design/actions/workflows/validate.yml/badge.svg)](https://github.com/vstlmkh/building-design/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 > Builds a product design system as a versioned, runnable artifact: brand, DTCG tokens with
 > light/dark themes, web/iOS/Android icon packs, a UI kit, UX artifacts and a zero-install
 > interactive prototype — structured so AI coding agents can reimplement the design exactly.
@@ -17,11 +21,42 @@ stories, flows, screen specs), and a zero-install interactive prototype that any
 run locally — structured so an AI coding agent can reimplement the design exactly in Flutter,
 SwiftUI, Compose, or on the web.
 
-## Install
+## Install and run
+
+Install the released package for both agents at user level:
 
 ```bash
-ln -s "$(pwd)" ~/.claude/skills/building-design
+npx building-design install
 ```
+
+Use `--agent claude` or `--agent kimi` for one agent, and `--project /path/to/repo` for a
+project-local install. `npx building-design status` inspects the installation; rerunning
+`install` preserves existing files unless `--force` is explicit.
+
+The same directory-form skill works in **Claude Code** and **Kimi Code**; no generated copies
+or tool-specific branches are needed. This checkout includes project-local discovery links in
+`.claude/skills/` and `.kimi-code/skills/`, so both CLIs can discover it when opened at the
+repository root.
+
+To link a development checkout instead of installing the npm release:
+
+```bash
+# Claude Code
+mkdir -p ~/.claude/skills
+ln -s "$(pwd)" ~/.claude/skills/building-design
+
+# Kimi Code
+mkdir -p ~/.kimi-code/skills
+ln -s "$(pwd)" ~/.kimi-code/skills/building-design
+```
+
+Kimi Code also supports the shared `~/.agents/skills/` location. If this checkout is not at the
+target path, replace it first or remove the old link before creating a new one.
+
+Invoke manually with `/building-design` in Claude Code or `/skill:building-design` in Kimi
+Code. Both agents can also trigger it automatically from the request. In Kimi Code,
+`${KIMI_SKILL_DIR}` resolves supporting files; the skill instructions provide the equivalent
+path-resolution rule for Claude Code.
 
 ## What it enforces
 
@@ -49,7 +84,9 @@ Standard library only. `build_icons.py` needs one external rasterizer
 
 ## Layout
 
-- `SKILL.md` — the skill body: non-negotiables, the 7-phase workflow, the A–E rule, gotchas
+- `SKILL.md` — shared Claude/Kimi frontmatter and body: workflow, A–E rule, gotchas
+- `.claude/skills/building-design` — project-local Claude discovery link to this checkout
+- `.kimi-code/skills/building-design` — project-local Kimi discovery link to this checkout
 - `references/` — loaded on demand per phase
 - `scripts/` — the five utilities
 - `evals/` — trigger, output-conformance, and negative near-miss scenarios

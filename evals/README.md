@@ -13,10 +13,16 @@ negative near-misses that share vocabulary with the skill but need something els
 
 ## Running them
 
-Run each query in a fresh session **twice** — once with the skill available and once without —
-and grade the assertions PASS/FAIL with concrete evidence from the transcript and the produced
-files. The without-skill run is the baseline; an assertion that both runs satisfy is not
-measuring the skill.
+Run the matrix in **both Claude Code and Kimi Code**. For each agent, run every query in a
+fresh session **twice** — once with the skill available and once without — and grade the
+assertions PASS/FAIL with concrete evidence from the transcript and the produced files. The
+without-skill run is the baseline; an assertion that both runs satisfy is not measuring the
+skill.
+
+Use natural-language queries to test automatic triggering. Separately smoke-test explicit
+loading with `/building-design` in Claude Code and `/skill:building-design` in Kimi Code. For
+an isolated Kimi run without a global install, point `--skills-dir` at the directory containing
+`building-design/`; in this checkout the project-local discovery links need no extra flags.
 
 ## Baseline gaps the skill is expected to close
 
